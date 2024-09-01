@@ -110,7 +110,7 @@ export default function Dashboard() {
                         />
                     )}
                 </main>
-                <aside className="w-80 overflow-y-auto border-l">
+                <aside className="w-[350px] overflow-y-auto border-l">
                     <Preview interfaceData={selectedInterface} menuItems={selectedInterface.menuItems} />
                 </aside>
             </div>

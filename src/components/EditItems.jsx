@@ -1,14 +1,26 @@
-import { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Edit, Trash2 } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import AddItemDialog from './AddItemDialog'
 import EditItemDialog from './EditItemDialog'
 
 export default function EditItems({ menuItems, setMenuItems }) {
   const [editingItem, setEditingItem] = useState(null)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState('All')
+
+  const categories = useMemo(() => {
+    const cats = ['All', ...new Set(menuItems.map(item => item.category))]
+    return cats.sort()
+  }, [menuItems])
+
+  const filteredItems = useMemo(() => {
+    if (selectedCategory === 'All') return menuItems
+    return menuItems.filter(item => item.category === selectedCategory)
+  }, [menuItems, selectedCategory])
 
   const handleEdit = (item) => {
     setEditingItem(item)
@@ -33,11 +45,24 @@ export default function EditItems({ menuItems, setMenuItems }) {
         <CardTitle>Edit Menu Items</CardTitle>
       </CardHeader>
       <CardContent>
-        <AddItemDialog addItem={handleAdd} />
+        <div className="flex justify-between mb-4">
+          <AddItemDialog addItem={handleAdd} />
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Category</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Price</TableHead>
@@ -45,9 +70,8 @@ export default function EditItems({ menuItems, setMenuItems }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {menuItems.map((item, index) => (
+            {filteredItems.map((item, index) => (
               <TableRow key={index}>
-                <TableCell>{item.category}</TableCell>
                 <TableCell>{item.name}</TableCell>
                 <TableCell>{item.description}</TableCell>
                 <TableCell>${item.price}</TableCell>
@@ -63,12 +87,11 @@ export default function EditItems({ menuItems, setMenuItems }) {
             ))}
           </TableBody>
         </Table>
-
         {editingItem && (
-          <EditItemDialog 
-            item={editingItem} 
-            updateItem={handleUpdate} 
-            open={isEditDialogOpen} 
+          <EditItemDialog
+            item={editingItem}
+            updateItem={handleUpdate}
+            open={isEditDialogOpen}
             setOpen={setIsEditDialogOpen}
           />
         )}
