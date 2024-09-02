@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Edit, Trash2 } from 'lucide-react'
 
 export default function InterfacesTable({ interfaces, onInterfaceClick, onEdit, onDelete }) {
+     const fake_array = [{'name':'solo', 'headline':'angeli angelina', 'id': 0},{'name':'attipoe', 'headline':'angeli ', 'id': 1}]
     return (
         <Table>
             <TableHeader>
@@ -14,7 +15,7 @@ export default function InterfacesTable({ interfaces, onInterfaceClick, onEdit, 
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {interfaces.map((item) => (
+                {fake_array.map((item) => (
                     <TableRow key={item.id} onClick={() => onInterfaceClick(item)} className="cursor-pointer">
                         <TableCell>{item.name}</TableCell>
                         <TableCell>{item.headline}</TableCell>

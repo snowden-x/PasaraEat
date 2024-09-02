@@ -7,7 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { PlusCircle } from 'lucide-react'
 
-export default function AddItemDialog({ addItem }) {
+export default function AddItemDialog() {
+    //wouldnt touch now..
     const [open, setOpen] = useState(false)
     const [category, setCategory] = useState('')
     const [customCategory, setCustomCategory] = useState('')
@@ -23,19 +24,34 @@ export default function AddItemDialog({ addItem }) {
         }
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-        const finalCategory = category === 'custom' ? customCategory : category
-        const newItem = { category: finalCategory, name, description, price, picture }
-        addItem(newItem)
-        setOpen(false)
-        // Reset form
+    const ResetForm = () =>{
         setCategory('')
         setCustomCategory('')
         setName('')
         setDescription('')
         setPrice('')
         setPicture('')
+    }
+
+    //logic to submit code for changes.
+    const handleSubmit = (e) => {
+
+        //prevent default behaviours of browser 
+        e.preventDefault()
+        
+        //Set dictionary that contains the current set of categories to be sent.
+        const finalCategory = category === 'custom' ? customCategory : category
+        const newItem = { category: finalCategory, name, description, price, picture }
+
+        //add logic to send newItem to backend using axios and webscokets.
+        console.log(newItem);
+        
+        //Still dont know what this does
+        setOpen(false)
+
+        // Reset form fields
+        ResetForm()
+       
     }
 
     return (
@@ -57,6 +73,7 @@ export default function AddItemDialog({ addItem }) {
                                 <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
                             <SelectContent>
+                                {/**Would accept menu items from backend*/}
                                 <SelectItem value="Food">Food</SelectItem>
                                 <SelectItem value="Drinks">Drinks</SelectItem>
                                 <SelectItem value="Beverages">Beverages</SelectItem>
