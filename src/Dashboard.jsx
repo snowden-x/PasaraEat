@@ -24,10 +24,11 @@ export default function Dashboard() {
                         <main className="flex-1 overflow-y-auto p-4">
                             {SideBarItems.map((item)=>(activeItem === item.name && item.content))}
                         </main>
-                        <aside className="w-80 overflow-y-auto border-l">
+                        <aside className="w-96 overflow-y-auto">
                         <Preview/>
                         </aside>
                     </div>
             </div>
         )
 }
+
