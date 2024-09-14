@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartNoAxesGantt, ShoppingBag, Plus, Minus, Search, Star, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -9,42 +8,96 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
-export default function UserInterface() {
-    const [menuItems, setMenuItems] = useState([]);
-    const [categories, setCategories] = useState([]);
+
+
+const menuItems = [
+    { id: '0', category: 'Food', name: 'Gourmet Burger', description: 'Juicy beef patty with premium toppings', price: 15, image: '/carrots.jpg', rating: 4.5, popular: true },
+    { id: '1', category: 'Food', name: 'Artisan Pizza', description: 'Wood-fired with fresh ingredients', price: 18, image: '/dones.jpg', rating: 4.2 },
+    { id: '2', category: 'Drinks', name: 'Craft Cola', description: 'Small-batch artisanal soda', price: 4, image: '/eggs.jpg', rating: 3.8 },
+    { id: '3', category: 'Food', name: 'Superfood Salad', description: 'Nutrient-packed greens and grains', price: 12, image: '/fruity.jpg', rating: 4.0, popular: true },
+    { id: '4', category: 'Drinks', name: 'Fresh-Squeezed Lemonade', description: 'Made to order', price: 5, image: '/steak.jpg', rating: 4.7 },
+    { id: '5', category: 'Desserts', name: 'Decadent Chocolate Cake', description: 'Rich and moist', price: 8, image: '/tomato.jpg', rating: 4.9, popular: true },
+    { id: '6', category: 'Food', name: 'Artisan Pizza', description: 'Wood-fired with fresh ingredients', price: 18, image: '/dones.jpg', rating: 4.2 },
+    { id: '7', category: 'Drinks', name: 'Craft Cola', description: 'Small-batch artisanal soda', price: 4, image: '/eggs.jpg', rating: 3.8 },
+    { id: '8', category: 'Food', name: 'Superfood Salad', description: 'Nutrient-packed greens and grains', price: 12, image: '/fruity.jpg', rating: 4.0, popular: true },
+    { id: '9', category: 'Drinks', name: 'Fresh-Squeezed Lemonade', description: 'Made to order', price: 5, image: '/steak.jpg', rating: 4.7 },
+    { id: '10', category: 'Desserts', name: 'Decadent Chocolate Cake', description: 'Rich and moist', price: 8, image: '/tomato.jpg', rating: 4.9, popular: true },
+];
+
+const NavMenu = ({ activeCategory, setActiveCategory }) => {
+    const categories = ['All', ...new Set(menuItems.map(item => item.category))];
+
+    return (
+        <ScrollArea className="w-full">
+            <div className="flex py-4 px-6 space-x-4">
+                {categories.map((category) => (
+                    <Button
+                        key={category}
+                        variant={activeCategory === category ? "default" : "outline"}
+                        className="whitespace-nowrap"
+                        onClick={() => setActiveCategory(category)}
+                    >
+                        {category}
+                    </Button>
+                ))}
+            </div>
+        </ScrollArea>
+    );
+};
+
+const MenuItem = ({ item, cart, addToCart, removeFromCart }) => (
+    <Card className="overflow-hidden transition-all hover:shadow-lg">
+        <div className="relative">
+            <img src={item.image} alt={item.name} className="w-full h-40 object-cover" />
+            {item.popular && (
+                <Badge className="absolute top-2 right-2 bg-yellow-400 text-yellow-900">
+                    Popular
+                </Badge>
+            )}
+        </div>
+        <CardContent className="p-4">
+            <h4 className="font-bold text-xl text-gray-800">{item.name}</h4>
+            <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+            <div className="flex items-center mt-2 text-yellow-500">
+                <Star size={16} fill="currentColor" />
+                <span className="ml-1 text-sm">{item.rating.toFixed(1)}</span>
+            </div>
+            <div className="flex justify-between items-center mt-4">
+                <span className="font-bold text-lg text-primary">${item.price.toFixed(2)}</span>
+                <div className="flex items-center space-x-2">
+                    <Button
+                        size="sm"
+                        variant={cart[item.id] ? "default" : "outline"}
+                        className="rounded-full"
+                        onClick={() => addToCart(item.id)}
+                    >
+                        <Plus size={16} />
+                    </Button>
+                    {cart[item.id] && (
+                        <>
+                            <span className="font-semibold">{cart[item.id]}</span>
+                            <Button
+                                size="sm"
+                                variant="outline"
+                                className="rounded-full"
+                                onClick={() => removeFromCart(item.id)}
+                            >
+                                <Minus size={16} />
+                            </Button>
+                        </>
+                    )}
+                </div>
+            </div>
+        </CardContent>
+    </Card>
+);
+
+export default function Preview() {
     const [activeCategory, setActiveCategory] = useState('All');
     const [searchTerm, setSearchTerm] = useState('');
     const [cart, setCart] = useState({});
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [orderPlaced, setOrderPlaced] = useState(false);
-
-    useEffect(() => {
-        fetchCategories();
-        fetchMenuItems();
-    }, []);
-
-    const fetchCategories = async () => {
-        try {
-            const response = await axios.post('http://192.168.56.1:8000/backend1/editables/', {
-                action: 'get_category'
-            });
-            setCategories(['All', ...response.data]);
-        } catch (error) {
-            console.error('Error fetching categories:', error);
-        }
-    };
-
-    const fetchMenuItems = async () => {
-        try {
-            const response = await axios.post('http://192.168.56.1:8000/backend1/editables/', {
-                action: 'get_menu_contents',
-                content: { selectedCategory: 'All' }
-            });
-            setMenuItems(response.data);
-        } catch (error) {
-            console.error('Error fetching menu items:', error);
-        }
-    };
 
     const filteredItems = menuItems.filter(item =>
         (activeCategory === 'All' || item.category === activeCategory) &&
@@ -121,68 +174,18 @@ export default function UserInterface() {
                             icon={<Search className="text-gray-400" />}
                         />
                     </div>
-                    <ScrollArea className="w-full">
-                        <div className="flex py-4 px-6 space-x-4">
-                            {categories.map((category) => (
-                                <Button
-                                    key={category}
-                                    variant={activeCategory === category ? "default" : "outline"}
-                                    className="whitespace-nowrap"
-                                    onClick={() => setActiveCategory(category)}
-                                >
-                                    {category}
-                                </Button>
-                            ))}
-                        </div>
-                    </ScrollArea>
+                    <NavMenu activeCategory={activeCategory} setActiveCategory={setActiveCategory} />
                 </div>
                 <CardContent className="mt-6 pb-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredItems.map((item) => (
-                            <Card key={item.id} className="overflow-hidden transition-all hover:shadow-lg">
-                                <div className="relative">
-                                    <img src={item.image_url} alt={item.name} className="w-full h-40 object-cover" />
-                                    {item.popular && (
-                                        <Badge className="absolute top-2 right-2 bg-yellow-400 text-yellow-900">
-                                            Popular
-                                        </Badge>
-                                    )}
-                                </div>
-                                <CardContent className="p-4">
-                                    <h4 className="font-bold text-xl text-gray-800">{item.name}</h4>
-                                    <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-                                    <div className="flex items-center mt-2 text-yellow-500">
-                                        <Star size={16} fill="currentColor" />
-                                        <span className="ml-1 text-sm">{item.rating.toFixed(1)}</span>
-                                    </div>
-                                    <div className="flex justify-between items-center mt-4">
-                                        <span className="font-bold text-lg text-primary">${item.price.toFixed(2)}</span>
-                                        <div className="flex items-center space-x-2">
-                                            <Button
-                                                size="sm"
-                                                variant={cart[item.id] ? "default" : "outline"}
-                                                className="rounded-full"
-                                                onClick={() => addToCart(item.id)}
-                                            >
-                                                <Plus size={16} />
-                                            </Button>
-                                            {cart[item.id] && (
-                                                <>
-                                                    <span className="font-semibold">{cart[item.id]}</span>
-                                                    <Button
-                                                        size="sm"
-                                                        variant="outline"
-                                                        className="rounded-full"
-                                                        onClick={() => removeFromCart(item.id)}
-                                                    >
-                                                        <Minus size={16} />
-                                                    </Button>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
+                            <MenuItem
+                                key={item.id}
+                                item={item}
+                                cart={cart}
+                                addToCart={addToCart}
+                                removeFromCart={removeFromCart}
+                            />
                         ))}
                     </div>
                 </CardContent>

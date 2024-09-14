@@ -26,12 +26,8 @@ export default function Dashboard() {
                             {/**Content of current sideBar items */}
                             {SideBarItems.map((item)=>(activeItem === item.name && item.content))}
                         </main>
-<<<<<<< HEAD
-                        <aside className="w-96 overflow-y-auto">
-=======
                         <aside className="w-80 overflow-y-auto border-l">
                             {/**Preview Page Content */}
->>>>>>> debc506d4b5635fe8b013d2cee7f26ad93b1ad24
                         <Preview/>
                         </aside>
                     </div>
