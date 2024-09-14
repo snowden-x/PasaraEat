@@ -5,25 +5,26 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import axios from 'axios'
 
-export default function EditItemDialog({ item, updateItem, open, setOpen }) {
+export default function EditItemDialog({ item,open,setOpen,category_array,selectedCategory,index_ ,setarray_to_be_added}) {
     const [editingItem, setEditingItem] = useState(item)
     const [customCategory, setCustomCategory] = useState('')
     const [isCustomCategory, setIsCustomCategory] = useState(false)
 
     useEffect(() => {
         setEditingItem(item)
-        setIsCustomCategory(!['Food', 'Drinks', 'Beverages'].includes(item.category))
+        setIsCustomCategory(!Array.from(category_array.keys()).includes(selectedCategory - 1))
         setCustomCategory(isCustomCategory ? item.category : '')
+        console.log('custom', isCustomCategory, 'Custom NAme:',customCategory)
+        console.log(item)
+        console.log('SelectedCategory:',  selectedCategory)
+        console.log( 'Ctageoryarray:', Array.from(category_array.keys()))
     }, [item])
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        const updatedItem = {
-            ...editingItem,
-            category: isCustomCategory ? customCategory : editingItem.category
-        }
-        updateItem(updatedItem)
+        handleSend();
         setOpen(false)
     }
 
@@ -37,6 +38,27 @@ export default function EditItemDialog({ item, updateItem, open, setOpen }) {
         }
     }
 
+    const handleSend = async(item,index) => {
+          try {
+            // Make the POST request
+            const result = await axios.post('http://192.168.56.1:8000/backend1/editables/',{
+                'action':'edit_item',
+                'content':{'index':index_, 'selectedCategory': selectedCategory, 'editedItem': editingItem}
+            }, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+      
+            // Process the response
+            console.log('pig')
+            console.log(result.data);
+            setarray_to_be_added(result.data)
+        } catch (error) {
+            console.error('There was an error!', error);
+        };
+      }
+
     
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -48,16 +70,16 @@ export default function EditItemDialog({ item, updateItem, open, setOpen }) {
                     <div>
                         <Label htmlFor="category">Category</Label>
                         <Select 
-                            value={isCustomCategory ? 'custom' : editingItem.category} 
+                            value={isCustomCategory ? 'custom' : category_array[selectedCategory-1]} 
                             onValueChange={handleCategoryChange}
                         >
                             <SelectTrigger>
                                 <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="Food">Food</SelectItem>
-                                <SelectItem value="Drinks">Drinks</SelectItem>
-                                <SelectItem value="Beverages">Beverages</SelectItem>
+                                {category_array.map((item,index)=>(
+                                    <SelectItem value={item}>{item}</SelectItem> 
+                                ))}
                                 <SelectItem value="custom">Custom Category</SelectItem>
                             </SelectContent>
                         </Select>
