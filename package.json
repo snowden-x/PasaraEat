@@ -58,8 +58,12 @@
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
+<<<<<<< HEAD
     "vaul": "^0.9.2",
     "zod": "^3.23.8"
+=======
+    "uuid": "^10.0.0"
+>>>>>>> debc506d4b5635fe8b013d2cee7f26ad93b1ad24
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
