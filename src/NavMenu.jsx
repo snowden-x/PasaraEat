@@ -1,46 +1,52 @@
-import React, { useState} from 'react'
+import React, { useState } from 'react'
+import { ScrollArea , ScrollBar} from './components/ui/scroll-area'
 
-export default function MobileNavMenu() {
-  const [activeCategory, setActiveCategory] = useState('Food')
+const categories = [
+  { id: 'drinks', name: 'Drinks' },
+  { id: 'beverages', name: 'Beverages' },
+  { id: 'food', name: 'Food' },
+  { id: 'sides', name: 'Sides' },
+  { id: 'beer', name: 'Beer' },
+  { id: 'wine', name: 'Wine' },
+  { id: 'spirits', name: 'Spirits' },
+  { id: 'non-alcoholic', name: 'Non-Alcoholic' },
+]
 
-  const categories = [
-    'Food',
-    'Continental',
-    'Beverages',
-    'Wine',
-    'Soft Drinks',
-    'Desserts',
-    'Snacks'
-  ]
-
-  const handleCategoryClick = (categoryName) => {
-    setActiveCategory(categoryName)
-    console.log(categoryName)
-  }
-
+export default function NavMenu() {
+  const [activeCategory, setActiveCategory] = useState('drinks')
 
   return (
-    <div className="relative w-auto my-6 rounded-xl px-4 py-2 bg-transparent">
-      <div
-        className="flex overflow-x-auto space-x-4 hide-scrollbar"
-      >
-        {categories.map((name) => (
-          <button
-            key={name}
-            className={`
-              flex-shrink-0 px-4 py-2 text-sm rounded-full transition-colors duration-200 ease-in-out
-              ${
-                activeCategory === name
-                  ? 'bg-primary text-primary-foreground font-semibold'
-                  : 'bg-gray-50 text-gray-600 font-medium hover:bg-gray-200'
-              }
-            `}
-            onClick={() => handleCategoryClick(name)}
-          >
-            {name}
-          </button>
-        ))}
-      </div>
-    </div>
+    <ScrollArea className="w-full p-4 my-4 sticky z-20 bg-white">
+      <nav className="">
+        <div className="flex space-x-4 min-w-max">
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              className={`cursor-pointer transition-all duration-300 ease-in-out px-2
+                ${activeCategory === category.id
+                  ? 'text-primary'
+                  : 'text-gray-400'
+                }`}
+              onClick={() => setActiveCategory(category.id)}
+            >
+              <span
+                className={`transition-all duration-300 ease-in-out whitespace-nowrap
+                  ${activeCategory === category.id
+                    ? 'text-xl font-semibold'
+                    : 'text-sm font-normal'
+                  }`}
+                style={{
+                  display: 'inline-block',
+                  transform: `scale(${activeCategory === category.id ? 1.1 : 1})`,
+                }}
+              >
+                {category.name}
+              </span>
+            </div>
+          ))}
+        </div>
+      </nav>
+    <ScrollBar orientation="horizontal" className="hidden"/>
+    </ScrollArea>
   )
 }

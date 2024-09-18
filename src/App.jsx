@@ -4,11 +4,11 @@ import UserInterface from './UserInterface'
 
 export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/userinterface" element={<UserInterface />} />
-      </Routes>
-    </Router>
+        <Router>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/userinterface" element={<UserInterface />} />
+          </Routes>
+        </Router>
   )
 }
